@@ -18,7 +18,7 @@ jobs:
             . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
             nix profile add --accept-flake-config github:cachix/devenv
             export SKIP=no-commit-to-branch
-            devenv test -v --trace-output stderr --trace-format full
+            devenv test --verbose
 
       - store_test_results:
           path: test-results
@@ -45,7 +45,7 @@ jobs:
             . /home/circleci/.nix-profile/etc/profile.d/nix.sh
             nix profile add --accept-flake-config github:cachix/devenv
             export SKIP=no-commit-to-branch
-            devenv test -v --trace-output stderr --trace-format full
+            devenv test --verbose
 
       - store_test_results:
           path: test-results
