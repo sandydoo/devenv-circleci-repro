@@ -7,13 +7,15 @@ jobs:
     steps:
       - run:
           command: |
-              sh <(curl -L https://nixos.org/nix/install)
+              sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --no-daemon
+              mkdir -p ~/.config/nix
+              echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
       - checkout
       - run:
           name: Install devenv
           command: |
             . /home/circleci/.nix-profile/etc/profile.d/nix.sh
-            nix-env -iA devenv -f https://github.com/NixOS/nixpkgs/tarball/nixpkgs-unstable
+            nix profile add --accept-flake-config github:cachix/devenv
             export SKIP=no-commit-to-branch
             devenv test -v --trace-output stderr --trace-format full
 
