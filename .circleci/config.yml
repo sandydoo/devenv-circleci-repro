@@ -7,7 +7,7 @@ jobs:
     steps:
       - run:
           command: |
-              sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --no-daemon
+              sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --daemon
               mkdir -p ~/.config/nix
               echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
       - checkout
