@@ -44,7 +44,7 @@ jobs:
           name: Install devenv
           command: |
             . /home/circleci/.nix-profile/etc/profile.d/nix.sh
-            nix profile add --accept-flake-config github:cachix/devenv
+            nix profile add --accept-flake-config github:cachix/devenv/set-umask
             export SKIP=no-commit-to-branch
             devenv test --verbose
 
@@ -53,6 +53,7 @@ jobs:
 
       - store_artifacts:
           path: htmlcov
+
   test-nix-single-user:
     machine:
       image: ubuntu-2404:current
