@@ -25,8 +25,36 @@ jobs:
 
       - store_artifacts:
           path: htmlcov
+
+  test-single-user:
+    # resource_class: arm.medium
+    machine:
+      image: ubuntu-2404:current
+    steps:
+      - run:
+          command: |
+              sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --no-daemon
+              mkdir -p ~/.config/nix
+              echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
+              echo "extra-substituters = https://devenv.cachix.org" >> ~/.config/nix/nix.conf
+              echo "extra-trusted-public-keys = devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw=" >> ~/.config/nix/nix.conf
+      - checkout
+      - run:
+          name: Install devenv
+          command: |
+            . /home/circleci/.nix-profile/etc/profile.d/nix.sh
+            nix profile add --accept-flake-config github:cachix/devenv
+            export SKIP=no-commit-to-branch
+            devenv test -v --trace-output stderr --trace-format full
+
+      - store_test_results:
+          path: test-results
+
+      - store_artifacts:
+          path: htmlcov
 workflows:
   version: 2
   test:
     jobs:
       - test
+      - test-single-user
