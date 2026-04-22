@@ -7,9 +7,11 @@ jobs:
     steps:
       - run:
           command: |
-              sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --daemon
+              sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --daemon --yes
               mkdir -p ~/.config/nix
               echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
+              echo "extra-substituters = https://devenv.cachix.org" >> ~/.config/nix/nix.conf
+              echo "extra-trusted-public-keys = devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw=" >> ~/.config/nix/nix.conf
       - checkout
       - run:
           name: Install devenv
