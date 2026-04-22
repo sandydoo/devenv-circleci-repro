@@ -1,0 +1,29 @@
+version: 2.1
+jobs:
+  test:
+    # resource_class: arm.medium
+    machine:
+      image: ubuntu-2404:current
+    steps:
+      - run:
+          command: |
+              sh <(curl -L https://nixos.org/nix/install)
+      - checkout
+      - run:
+          name: Install devenv
+          command: |
+            . /home/circleci/.nix-profile/etc/profile.d/nix.sh
+            nix-env -iA devenv -f https://github.com/NixOS/nixpkgs/tarball/nixpkgs-unstable
+            export SKIP=no-commit-to-branch
+            devenv test -v
+
+      - store_test_results:
+          path: test-results
+
+      - store_artifacts:
+          path: htmlcov
+workflows:
+  version: 2
+  test:
+    jobs:
+      - test
