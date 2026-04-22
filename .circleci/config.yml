@@ -33,7 +33,6 @@ jobs:
     steps:
       - run:
           command: |
-              sudo setfacl -k /tmp
               sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --no-daemon
               mkdir -p ~/.config/nix
               echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
@@ -53,9 +52,25 @@ jobs:
 
       - store_artifacts:
           path: htmlcov
+  test-nix-single-user:
+    machine:
+      image: ubuntu-2404:current
+    steps:
+      - run:
+          command: |
+              sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --no-daemon
+              mkdir -p ~/.config/nix
+              echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
+      - run:
+          name: Build a trivial derivation
+          command: |
+            . /home/circleci/.nix-profile/etc/profile.d/nix.sh
+            nix build --impure --expr 'let p = import <nixpkgs> {}; in p.runCommand "hello" {} "echo hi > $out"' --print-out-paths
+
 workflows:
   version: 2
   test:
     jobs:
       - test
       - test-single-user
+      - test-nix-single-user
