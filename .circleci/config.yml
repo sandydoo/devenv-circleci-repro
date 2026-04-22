@@ -15,7 +15,7 @@ jobs:
             . /home/circleci/.nix-profile/etc/profile.d/nix.sh
             nix-env -iA devenv -f https://github.com/NixOS/nixpkgs/tarball/nixpkgs-unstable
             export SKIP=no-commit-to-branch
-            devenv test -v
+            devenv test -v --trace-output stderr --trace-format full
 
       - store_test_results:
           path: test-results
